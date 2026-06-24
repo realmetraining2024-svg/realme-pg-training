@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard | Realme PG Training</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0E0E10; --card:#1F1F23; --line:#2C2C31;
+    --yellow:#FFC900; --text:#F4F4F2; --text-dim:#9C9CA3; --text-mute:#6E6E76;
+    --green:#3DDC97; --red:#FF5D5D; --amber:#FFC900;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    padding:20px;
+  }
+  .wrap{ max-width:1100px; margin:0 auto; }
+  header{ margin-bottom:24px; }
+  h1{ font-size:24px; font-weight:800; }
+  .sub{ color:var(--text-dim); font-size:13px; margin-top:4px; }
+
+  .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  select, input[type=text]{
+    background:var(--card); border:1px solid var(--line); color:var(--text);
+    padding:9px 12px; border-radius:10px; font-size:13px;
+  }
+  button{
+    background:var(--yellow); color:#1A1300; border:none; font-weight:700;
+    padding:9px 16px; border-radius:10px; font-size:13px; cursor:pointer;
+  }
+  button.ghost{ background:transparent; border:1px solid var(--line); color:var(--text); }
+
+  .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+  @media(max-width:760px){ .stats-grid{ grid-template-columns:repeat(2,1fr); } }
+  .stat-card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; }
+  .stat-card .v{ font-size:28px; font-weight:800; }
+  .stat-card .l{ font-size:12.5px; color:var(--text-dim); margin-top:4px; }
+  .stat-card.accent .v{ color:var(--yellow); }
+
+  .panel{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px; margin-bottom:20px; }
+  .panel h2{ font-size:15px; font-weight:700; margin-bottom:16px; }
+  .chart-wrap{ position:relative; height:280px; }
+
+  .grid-2{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  @media(max-width:760px){ .grid-2{ grid-template-columns:1fr; } }
+
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th{ text-align:left; padding:10px 8px; color:var(--text-dim); font-weight:600; border-bottom:1px solid var(--line); white-space:nowrap; }
+  td{ padding:10px 8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  .table-scroll{ overflow-x:auto; }
+  .badge{ font-size:11.5px; padding:3px 9px; border-radius:20px; font-weight:700; }
+  .badge.good{ background:rgba(61,220,151,0.15); color:var(--green); }
+  .badge.mid{ background:rgba(255,201,0,0.15); color:var(--yellow); }
+  .badge.bad{ background:rgba(255,93,93,0.15); color:var(--red); }
+
+  .loading{ text-align:center; padding:60px; color:var(--text-dim); }
+  .spinner{ width:30px; height:30px; border-radius:50%; border:3px solid var(--line); border-top-color:var(--yellow); margin:0 auto 12px; animation:spin .8s linear infinite; }
+  @keyframes spin{ to{transform:rotate(360deg);} }
+  .empty{ color:var(--text-mute); font-size:13px; text-align:center; padding:30px; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Dashboard đào tạo PG — Realme AI</h1>
+    <p class="sub">Số liệu theo thời gian thực từ Google Sheets</p>
+  </header>
+
+  <div class="toolbar">
+    <select id="filter-khuvuc"><option value="">Tất cả khu vực</option></select>
+    <select id="filter-chinhanh"><option value="">Tất cả chi nhánh</option></select>
+    <input type="text" id="filter-search" placeholder="Tìm theo tên hoặc mã NV..." />
+    <button class="ghost" id="btn-refresh">Tải lại dữ liệu</button>
+    <button id="btn-export">Xuất CSV</button>
+  </div>
+
+  <div id="content">
+    <div class="loading"><div class="spinner"></div>Đang tải dữ liệu...</div>
+  </div>
+</div>
+
+<script>
+const API_URL = "DÁN_URL_APPS_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
+
+let nhanSuList = [];
+let ketQuaList = [];
+let charts = {};
+
+async function loadData(){
+  document.getElementById('content').innerHTML = '<div class="loading"><div class="spinner"></div>Đang tải dữ liệu...</div>';
+  try{
+    const [nhanSuRes, ketQuaRes] = await Promise.all([
+      fetch(`${API_URL}?action=getNhanSu`).then(r => r.json()),
+      fetch(`${API_URL}?action=getKetQua`).then(r => r.json())
+    ]);
+    nhanSuList = nhanSuRes;
+    ketQuaList = ketQuaRes;
+    populateFilters();
+    render();
+  }catch(err){
+    document.getElementById('content').innerHTML = `<div class="empty">Không thể tải dữ liệu. Kiểm tra lại API_URL trong file dashboard.html.<br/>Lỗi: ${err.message}</div>`;
+  }
+}
+
+function populateFilters(){
+  const khuVucs = [...new Set(nhanSuList.map(n => n.khuVuc))].filter(Boolean);
+  const chiNhanhs = [...new Set(nhanSuList.map(n => n.chiNhanh))].filter(Boolean);
+  const selKV = document.getElementById('filter-khuvuc');
+  const selCN = document.getElementById('filter-chinhanh');
+  selKV.innerHTML = '<option value="">Tất cả khu vực</option>' + khuVucs.map(k => `<option value="${k}">${k}</option>`).join('');
+  selCN.innerHTML = '<option value="">Tất cả chi nhánh</option>' + chiNhanhs.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+function getFiltered(){
+  const kv = document.getElementById('filter-khuvuc').value;
+  const cn = document.getElementById('filter-chinhanh').value;
+  const search = document.getElementById('filter-search').value.toLowerCase();
+  return ketQuaList.filter(k => {
+    if(kv && k.khuVuc !== kv) return false;
+    if(cn && k.chiNhanh !== cn) return false;
+    if(search && !(`${k.hoTen} ${k.maNV}`.toLowerCase().includes(search))) return false;
+    return true;
+  });
+}
+
+function render(){
+  const filtered = getFiltered();
+  const totalPG = nhanSuList.length;
+  const completedPGSet = new Set(filtered.map(k => k.maNV));
+  const completedCount = completedPGSet.size;
+  const avgScore = filtered.length ? Math.round(filtered.reduce((s,k)=>s+Number(k.diemSo),0)/filtered.length) : 0;
+  const passCount = filtered.filter(k => Number(k.diemSo) >= 65).length;
+  const passRate = filtered.length ? Math.round((passCount/filtered.length)*100) : 0;
+
+  document.getElementById('content').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card"><div class="v">${totalPG}</div><div class="l">Tổng số PG trong hệ thống</div></div>
+      <div class="stat-card accent"><div class="v">${completedCount}</div><div class="l">PG đã hoàn thành khóa học</div></div>
+      <div class="stat-card"><div class="v">${avgScore}%</div><div class="l">Điểm trung bình</div></div>
+      <div class="stat-card"><div class="v">${passRate}%</div><div class="l">Tỷ lệ đạt (≥65%)</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <h2>Tỷ lệ hoàn thành theo chi nhánh</h2>
+        <div class="chart-wrap"><canvas id="chart-chinhanh"></canvas></div>
+      </div>
+      <div class="panel">
+        <h2>Phân bố xếp loại</h2>
+        <div class="chart-wrap"><canvas id="chart-xeploai"></canvas></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Chi tiết kết quả (${filtered.length} lượt làm bài)</h2>
+      <div class="table-scroll">
+        ${filtered.length ? renderTable(filtered) : '<div class="empty">Chưa có dữ liệu phù hợp với bộ lọc.</div>'}
+      </div>
+    </div>
+  `;
+
+  renderCharts(filtered);
+}
+
+function renderTable(rows){
+  const sorted = [...rows].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  return `
+    <table>
+      <thead><tr>
+        <th>Thời gian</th><th>Mã NV</th><th>Họ tên</th><th>Chi nhánh</th><th>Khu vực</th><th>Điểm</th><th>Đúng/Tổng</th><th>Xếp loại</th>
+      </tr></thead>
+      <tbody>
+        ${sorted.map(r => `
+          <tr>
+            <td>${formatDate(r.timestamp)}</td>
+            <td>${r.maNV}</td>
+            <td>${r.hoTen}</td>
+            <td>${r.chiNhanh}</td>
+            <td>${r.khuVuc}</td>
+            <td>${r.diemSo}%</td>
+            <td>${r.soCauDung}/${r.tongCauHoi}</td>
+            <td>${badge(r.xepLoai)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function badge(xepLoai){
+  const cls = xepLoai === 'Xuất sắc' ? 'good' : xepLoai === 'Đạt' ? 'mid' : 'bad';
+  return `<span class="badge ${cls}">${xepLoai}</span>`;
+}
+
+function formatDate(ts){
+  const d = new Date(ts);
+  if(isNaN(d)) return ts;
+  return d.toLocaleString('vi-VN', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function renderCharts(filtered){
+  if(charts.chinhanh) charts.chinhanh.destroy();
+  if(charts.xeploai) charts.xeploai.destroy();
+
+  const byChiNhanh = {};
+  filtered.forEach(r => {
+    byChiNhanh[r.chiNhanh] = byChiNhanh[r.chiNhanh] || { total:0, sum:0 };
+    byChiNhanh[r.chiNhanh].total++;
+    byChiNhanh[r.chiNhanh].sum += Number(r.diemSo);
+  });
+  const cnLabels = Object.keys(byChiNhanh);
+  const cnData = cnLabels.map(c => Math.round(byChiNhanh[c].sum / byChiNhanh[c].total));
+
+  charts.chinhanh = new Chart(document.getElementById('chart-chinhanh'), {
+    type: 'bar',
+    data: {
+      labels: cnLabels,
+      datasets: [{ label:'Điểm TB', data: cnData, backgroundColor:'#FFC900', borderRadius:6 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false} },
+      scales:{
+        y:{ beginAtZero:true, max:100, ticks:{color:'#9C9CA3'}, grid:{color:'#2C2C31'} },
+        x:{ ticks:{color:'#9C9CA3'}, grid:{display:false} }
+      }
+    }
+  });
+
+  const xepLoaiCount = { 'Xuất sắc':0, 'Đạt':0, 'Chưa đạt':0 };
+  filtered.forEach(r => { if(xepLoaiCount[r.xepLoai] !== undefined) xepLoaiCount[r.xepLoai]++; });
+
+  charts.xeploai = new Chart(document.getElementById('chart-xeploai'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(xepLoaiCount),
+      datasets: [{ data: Object.values(xepLoaiCount), backgroundColor:['#3DDC97','#FFC900','#FF5D5D'], borderWidth:0 }]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'bottom', labels:{ color:'#F4F4F2', font:{size:12} } } }
+    }
+  });
+}
+
+function exportCSV(){
+  const filtered = getFiltered();
+  const headers = ['Thời gian','Mã NV','Họ tên','Chi nhánh','Khu vực','Điểm','Số câu đúng','Tổng câu','Xếp loại'];
+  const rows = filtered.map(r => [r.timestamp, r.maNV, r.hoTen, r.chiNhanh, r.khuVuc, r.diemSo, r.soCauDung, r.tongCauHoi, r.xepLoai]);
+  let csv = headers.join(',') + '\n' + rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob(['\ufeff' + csv], { type:'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ketqua_daotao_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+document.getElementById('btn-refresh').addEventListener('click', loadData);
+document.getElementById('btn-export').addEventListener('click', exportCSV);
+document.getElementById('filter-khuvuc').addEventListener('change', render);
+document.getElementById('filter-chinhanh').addEventListener('change', render);
+document.getElementById('filter-search').addEventListener('input', render);
+
+loadData();
+</script>
+
+</body>
+</html>
