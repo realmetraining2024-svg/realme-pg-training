@@ -292,6 +292,7 @@
 </div>
 
 <script>
+
 /* ============================================================
  * CẤU HÌNH - SỬA CÁC GIÁ TRỊ DƯỚI ĐÂY THEO DỰ ÁN CỦA BẠN
  * ============================================================ */
@@ -303,31 +304,31 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzjKCxnpXK4_xWtpOK5Tc7w
 //    driveId lấy từ link chia sẻ Google Drive dạng:
 //    https://drive.google.com/file/d/ĐÂY_LÀ_ID/view
 const LESSONS = [
-  { title: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",       desc: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",        driveId: "1X56Knue5Mmqz4aEAgxjw2kTO6gfZzsiM" },
-  { title: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",   desc: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",          driveId: "1Q8kph1cE1otczzYu3eMdlV0Kv0aTs6MY" },
-  { title: "TÍNH NĂNG VIÊN NANG MINI",   desc: "TÍNH NĂNG VIÊN NANG MINI",          driveId: "1rX_7Hg0dFtSgxHs2k4dXG7WrdrtnRbo5" },
-  { title: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",   desc: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",          driveId: "1pMEFhMoqS-B7En9LlcMY87LzTG8lm2yp" },
-  { title: "TÍNH NĂNG THANH TRẠNG THÁI",   desc: "TÍNH NĂNG THANH TRẠNG THÁI",          driveId: "1cFIS7xW46phvrT14qK4O7W6B8jwCTeo5" },
-  { title: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",   desc: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",          driveId: "1CTVU9xXhSD6hF1Uy5g1TibFKzfZ78s36" },
-  { title: "TÍNH NĂNG NFC",   desc: "TÍNH NĂNG NFC",          driveId: "11hN1tmZtRu0Q2qWAA8XshmdyWqqo44yg" },
-  { title: "TÍNH NĂNG LÀM DỊU MẮT",   desc: "TÍNH NĂNG LÀM DỊU MẮT",          driveId: "1DIjyEtv8m5CeIosxP84ubuexMW3Sl2Bf" },
-  { title: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",   desc: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",          driveId: "1sdz3SHiI-NROVeHyOu5xBIhxZd8upINB" },
-  { title: "TÍNH NĂNG KÉO VÀ THẢ",   desc: "TÍNH NĂNG KÉO VÀ THẢ",          driveId: "1CNnI0hMSuJHzxxJb1w29ETO8DMv5Bf17" },
-  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",   desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",          driveId: "1q7uNYE-9lnq6wtfCF7wWfXhBCNETDZFs" },
-  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",   desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",          driveId: "1FDZYAWNS6Xbalvwe8R93J5RGJlumtXOZ" },
-  { title: "TÍNH NĂNG GHI MÀN HÌNH",   desc: "TÍNH NĂNG GHI MÀN HÌNH",          driveId: "1bm5Yjh8kKx8sq8zDn6ZlAUI-Z5TEVsFY" },
-  { title: "TÍNH NĂNG CỬA SỔ NỔI",   desc: "TÍNH NĂNG CỬA SỔ NỔI",          driveId: "1jEk6LvSBSxj6-B78n0GSLBWvmiIXMnfg" },
-  { title: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",   desc: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",          driveId: "1XjY15B1yrVFm2wFdxwNuLwBFAedVit6D" },
-  { title: "TÍNH NĂNG CHỤP MÀN HÌNH",   desc: "TÍNH NĂNG CHỤP MÀN HÌNH",          driveId: "1swiFakT6ER6k_FtBppHF1PinyvNJPeJU" },
-  { title: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",   desc: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",          driveId: "15C_dl6EvYkWL0nc5mUQc4M0sdMkF_Qtz" },
-  { title: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",   desc: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",          driveId: "10HrtSbF1KPZ0UrerzCpbuZ7lJvhAh5MH" },
-  { title: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",   desc: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",          driveId: "1eqfWhY0zN5SpiGmQTIEO81JR9hyHL0uJ" },
-  { title: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",   desc: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",          driveId: "1hAD9SczOQvq_fPLsQEQAXidB3Avt1xsX" },
-  { title: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",   desc: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",          driveId: "1XBFxZiUa_BEfc9imVqvXOCIQnJYtkmwB" },
-  { title: "TÍNH NĂNG CAMERA AI POP OUT",         desc: "TÍNH NĂNG CAMERA AI POP OUT",          driveId: "1crNp5dINv9qgyvyZnnTQYq4F_7ec572e" },
-  { title: "TÍNH NĂNG CAMERA AI EDIT GENIE",                    desc: "TÍNH NĂNG CAMERA AI EDIT GENIE",         driveId: "1LYPj_BZLKDORA4t7a3vRKfhwT2ziYZIS" },
-  { title: "TÍNH NĂNG CÀI ĐẶT NHANH",     desc: "TÍNH NĂNG CÀI ĐẶT NHANH",     driveId: "1GeIS7jUQZQrrG9llcJpG5dqdwNHcZHBL" },
-  { title: "TÍNH NĂNG ẨN ỨNG DỤNG",         desc: "TÍNH NĂNG ẨN ỨNG DỤNG", driveId: "1oTpRjBo0CG8macwBce2_acy4nUJukS8-" }
+  { title: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",                  desc: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",                  driveId: "1X56Knue5Mmqz4aEAgxjw2kTO6gfZzsiM" },
+  { title: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",                   desc: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",                   driveId: "1Q8kph1cE1otczzYu3eMdlV0Kv0aTs6MY" },
+  { title: "TÍNH NĂNG VIÊN NANG MINI",                         desc: "TÍNH NĂNG VIÊN NANG MINI",                         driveId: "1rX_7Hg0dFtSgxHs2k4dXG7WrdrtnRbo5" },
+  { title: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",         desc: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",         driveId: "1pMEFhMoqS-B7En9LlcMY87LzTG8lm2yp" },
+  { title: "TÍNH NĂNG THANH TRẠNG THÁI",                       desc: "TÍNH NĂNG THANH TRẠNG THÁI",                       driveId: "1cFIS7xW46phvrT14qK4O7W6B8jwCTeo5" },
+  { title: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",                      desc: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",                      driveId: "1CTVU9xXhSD6hF1Uy5g1TibFKzfZ78s36" },
+  { title: "TÍNH NĂNG NFC",                                    desc: "TÍNH NĂNG NFC",                                    driveId: "11hN1tmZtRu0Q2qWAA8XshmdyWqqo44yg" },
+  { title: "TÍNH NĂNG LÀM DỊU MẮT",                            desc: "TÍNH NĂNG LÀM DỊU MẮT",                            driveId: "1DIjyEtv8m5CeIosxP84ubuexMW3Sl2Bf" },
+  { title: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",        desc: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",        driveId: "1sdz3SHiI-NROVeHyOu5xBIhxZd8upINB" },
+  { title: "TÍNH NĂNG KÉO VÀ THẢ",                             desc: "TÍNH NĂNG KÉO VÀ THẢ",                             driveId: "1CNnI0hMSuJHzxxJb1w29ETO8DMv5Bf17" },
+  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",      desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",      driveId: "1q7uNYE-9lnq6wtfCF7wWfXhBCNETDZFs" },
+  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",       desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",       driveId: "1FDZYAWNS6Xbalvwe8R93J5RGJlumtXOZ" },
+  { title: "TÍNH NĂNG GHI MÀN HÌNH",                           desc: "TÍNH NĂNG GHI MÀN HÌNH",                           driveId: "1bm5Yjh8kKx8sq8zDn6ZlAUI-Z5TEVsFY" },
+  { title: "TÍNH NĂNG CỬA SỔ NỔI",                             desc: "TÍNH NĂNG CỬA SỔ NỔI",                             driveId: "1jEk6LvSBSxj6-B78n0GSLBWvmiIXMnfg" },
+  { title: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",                  desc: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",                  driveId: "1XjY15B1yrVFm2wFdxwNuLwBFAedVit6D" },
+  { title: "TÍNH NĂNG CHỤP MÀN HÌNH",                          desc: "TÍNH NĂNG CHỤP MÀN HÌNH",                          driveId: "1swiFakT6ER6k_FtBppHF1PinyvNJPeJU" },
+  { title: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",                      desc: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",                      driveId: "15C_dl6EvYkWL0nc5mUQc4M0sdMkF_Qtz" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",                          desc: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",                          driveId: "10HrtSbF1KPZ0UrerzCpbuZ7lJvhAh5MH" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",                         desc: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",                         driveId: "1eqfWhY0zN5SpiGmQTIEO81JR9hyHL0uJ" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",                        desc: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",                        driveId: "1hAD9SczOQvq_fPLsQEQAXidB3Avt1xsX" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",                   desc: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",                   driveId: "1XBFxZiUa_BEfc9imVqvXOCIQnJYtkmwB" },
+  { title: "TÍNH NĂNG CAMERA AI POP OUT",                      desc: "TÍNH NĂNG CAMERA AI POP OUT",                      driveId: "1crNp5dINv9qgyvyZnnTQYq4F_7ec572e" },
+  { title: "TÍNH NĂNG CAMERA AI EDIT GENIE",                   desc: "TÍNH NĂNG CAMERA AI EDIT GENIE",                   driveId: "1LYPj_BZLKDORA4t7a3vRKfhwT2ziYZIS" },
+  { title: "TÍNH NĂNG CÀI ĐẶT NHANH",                          desc: "TÍNH NĂNG CÀI ĐẶT NHANH",                          driveId: "1GeIS7jUQZQrrG9llcJpG5dqdwNHcZHBL" },
+  { title: "TÍNH NĂNG ẨN ỨNG DỤNG",                            desc: "TÍNH NĂNG ẨN ỨNG DỤNG",                            driveId: "1oTpRjBo0CG8macwBce2_acy4nUJukS8-" }
 ];
 
 /* ============================================================
@@ -480,92 +481,7 @@ function renderQuizAll(){
         `).join('')}
       </div>
     `;
-    container.appendChild(card);
-  });
-  const submitBtn = document.createElement('button');
-  submitBtn.className = 'btn';
-  submitBtn.id = 'btn-submit-quiz';
-  submitBtn.textContent = 'Nộp bài';
-  submitBtn.disabled = true;
-  submitBtn.onclick = submitQuiz;
-  container.appendChild(submitBtn);
-  const hint = document.createElement('p');
-  hint.className = 'hint';
-  hint.id = 'submit-hint';
-  hint.textContent = `Trả lời hết ${cauHoiList.length} câu để nộp bài.`;
-  container.appendChild(hint);
-}
-
-function selectAnswer(qIdx, letter){
-  quizAnswers[qIdx] = letter;
-  const group = document.querySelector(`.opts[data-q="${qIdx}"]`);
-  group.querySelectorAll('.opt').forEach(opt => {
-    opt.classList.toggle('selected', opt.dataset.letter === letter);
-  });
-  checkAllAnswered();
-}
-
-function checkAllAnswered(){
-  const allAnswered = Object.keys(quizAnswers).length === cauHoiList.length;
-  document.getElementById('btn-submit-quiz').disabled = !allAnswered;
-  document.getElementById('submit-hint').style.display = allAnswered ? 'none' : 'block';
-}
-
-async function submitQuiz(){
-  let correct = 0;
-  cauHoiList.forEach((q, i) => {
-    if(quizAnswers[i] === q.dapAnDung) correct++;
-  });
-  const total = cauHoiList.length;
-  const score = Math.round((correct/total)*100);
-
-  document.getElementById('btn-submit-quiz').disabled = true;
-  document.getElementById('btn-submit-quiz').textContent = 'Đang ghi nhận kết quả...';
-
-  try{
-    await fetch(API_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: 'submitKetQua',
-        maNV: currentUser.maNV,
-        hoTen: currentUser.hoTen,
-        chiNhanh: currentUser.chiNhanh,
-        khuVuc: currentUser.khuVuc,
-        diemSo: score,
-        soCauDung: correct,
-        tongCauHoi: total
-      })
-    });
-  }catch(err){
-    console.error('Lỗi ghi kết quả:', err);
-  }
-
-  showResult(score, correct, total - correct);
-}
-
-function showResult(score, correct, wrong){
-  document.getElementById('result-score').textContent = `${score}%`;
-  document.getElementById('result-correct').textContent = correct;
-  document.getElementById('result-wrong').textContent = wrong;
-  let rank = 'Chưa đạt';
-  if(score >= 80) rank = 'Xuất sắc';
-  else if(score >= 65) rank = 'Đạt';
-  document.getElementById('result-rank').textContent = rank;
-  document.getElementById('result-title').textContent =
-    score >= 65 ? 'Chúc mừng bạn đã hoàn thành!' : 'Bạn cần ôn lại kiến thức';
-  document.getElementById('result-sub').textContent =
-    score >= 65
-      ? 'Kết quả của bạn đã được gửi về hệ thống.'
-      : 'Hãy xem lại video và làm bài kiểm tra lần sau.';
-  goTo('screen-result');
-}
-
-/* ============================================================
- * START
- * ============================================================ */
-(async function init(){
-  await Promise.all([loadNhanSu(), loadCauHoi()]);
-})();
+ …
 </script>
 
 </body>
