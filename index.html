@@ -297,19 +297,37 @@
  * ============================================================ */
 
 // 1. Dán Web app URL từ Google Apps Script vào đây
-const API_URL = "DÁN_URL_APPS_SCRIPT_CỦA_BẠN_VÀO_ĐÂY";
+const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnS42ZnVp6VmFeCMQt8JWXhiCPDSJBD9Ct8O_P_XShrDCvgWiTG0OiJkZhTfcBqZie1rl-1JiO23YLwoLD0QVwpRumPB5xzrFOzwwxYBbGNHhIW7d1O3Ll6a6w6aiMhZ_nQkpRm8Bc7WSWIIhedXNQ2PZdQzVQ3Th67Oj7R4zxjcKfBSxaI5GzQ2RuzlAOpMOLY51Hmd8M0NUwEdIfRDDZUHwgV6wFbtjna0opRgcvp8543W3k5IMcRhFrsaTzOh2rf0w_fSucCI1FOeDySLryth1tXQMxo2uXTLVZH5yGMfb4I00TY&lib=MElWv3fCycRJ4KzPrDSGjrOMuMqcyqBHD";
 
 // 2. Danh sách video bài học - sửa title, description và driveId cho từng video
 //    driveId lấy từ link chia sẻ Google Drive dạng:
 //    https://drive.google.com/file/d/ĐÂY_LÀ_ID/view
 const LESSONS = [
-  { title: "Giới thiệu AI Camera trên realme",       desc: "Tổng quan tính năng AI Camera",        driveId: "FILE_ID_VIDEO_1" },
-  { title: "AI Night Vision - Chụp đêm thông minh",   desc: "Cách AI tối ưu ảnh chụp đêm",          driveId: "FILE_ID_VIDEO_2" },
-  { title: "AI Portrait - Chân dung sắc nét",         desc: "Xử lý ảnh chân dung bằng AI",          driveId: "FILE_ID_VIDEO_3" },
-  { title: "AI Scene Recognition",                    desc: "Nhận diện khung cảnh tự động",         driveId: "FILE_ID_VIDEO_4" },
-  { title: "AI đa nhiệm - Multi-tasking mượt mà",     desc: "Công nghệ tối ưu RAM và đa nhiệm",     driveId: "FILE_ID_VIDEO_5" },
-  { title: "AI quản lý hiệu năng nền",                desc: "Tối ưu pin và hiệu năng khi đa nhiệm", driveId: "FILE_ID_VIDEO_6" },
-  { title: "Tổng kết & mẹo tư vấn khách hàng",         desc: "Cách trình bày tính năng AI cho khách", driveId: "FILE_ID_VIDEO_7" }
+  { title: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",       desc: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",        driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_1/view" },
+  { title: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",   desc: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_2/view" },
+  { title: "TÍNH NĂNG VIÊN NANG MINI",   desc: "TÍNH NĂNG VIÊN NANG MINI",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_3/view" },
+  { title: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",   desc: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_4/view" },
+  { title: "TÍNH NĂNG THANH TRẠNG THÁI",   desc: "TÍNH NĂNG THANH TRẠNG THÁI",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_5/view" },
+  { title: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",   desc: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_6/view" },
+  { title: "TÍNH NĂNG NFC",   desc: "TÍNH NĂNG NFC",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_7/view" },
+  { title: "TÍNH NĂNG LÀM DỊU MẮT",   desc: "TÍNH NĂNG LÀM DỊU MẮT",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_8/view" },
+  { title: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",   desc: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_9/view" },
+  { title: "TÍNH NĂNG KÉO VÀ THẢ",   desc: "TÍNH NĂNG KÉO VÀ THẢ",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_10/view" },
+  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",   desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_11/view" },
+  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",   desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_12/view" },
+  { title: "TÍNH NĂNG GHI MÀN HÌNH",   desc: "TÍNH NĂNG GHI MÀN HÌNH",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_13/view" },
+  { title: "TÍNH NĂNG CỬA SỔ NỔI",   desc: "TÍNH NĂNG CỬA SỔ NỔI",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_14/view" },
+  { title: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",   desc: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_15/view" },
+  { title: "TÍNH NĂNG CHỤP MÀN HÌNH",   desc: "TÍNH NĂNG CHỤP MÀN HÌNH",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_16/view" },
+  { title: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",   desc: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_17/view" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",   desc: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_18/view" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",   desc: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_19/view" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",   desc: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_20/view" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",   desc: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_21/view" },
+  { title: "TÍNH NĂNG CAMERA AI POP OUT",         desc: "TÍNH NĂNG CAMERA AI POP OUT",          driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_22/view" },
+  { title: "TÍNH NĂNG CAMERA AI EDIT GENIE",                    desc: "TÍNH NĂNG CAMERA AI EDIT GENIE",         driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_23/view" },
+  { title: "TÍNH NĂNG CÀI ĐẶT NHANH",     desc: "TÍNH NĂNG CÀI ĐẶT NHANH",     driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_24/view" },
+  { title: "TÍNH NĂNG ẨN ỨNG DỤNG",         desc: "TÍNH NĂNG ẨN ỨNG DỤNG", driveId: "https://drive.google.com/file/d/FILE_ID_VIDEO_25/view" }
 ];
 
 /* ============================================================
