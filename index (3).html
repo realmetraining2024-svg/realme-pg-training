@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Realme AI Training | Đào tạo PG</title>
+<style>
+  :root{
+    --bg: #0E0E10;
+    --bg-soft: #18181B;
+    --card: #1F1F23;
+    --line: #2C2C31;
+    --yellow: #FFC900;
+    --yellow-dim: #B89200;
+    --text: #F4F4F2;
+    --text-dim: #9C9CA3;
+    --text-mute: #6E6E76;
+    --green: #3DDC97;
+    --red: #FF5D5D;
+    --radius: 16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{
+    background:var(--bg);
+    color:var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .wrap{ max-width:560px; margin:0 auto; padding:0 0 80px; }
+
+  /* HEADER */
+  header{
+    padding:28px 20px 22px;
+    background:linear-gradient(180deg, #161618 0%, var(--bg) 100%);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .brand .dot{ width:10px; height:10px; border-radius:50%; background:var(--yellow); }
+  .brand span{ font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-dim); font-weight:600; }
+  h1{ font-size:24px; font-weight:800; line-height:1.25; letter-spacing:-0.01em; }
+  h1 em{ color:var(--yellow); font-style:normal; }
+  .sub{ margin-top:6px; font-size:14px; color:var(--text-dim); line-height:1.5; }
+
+  /* SCREENS */
+  .screen{ display:none; padding:20px; }
+  .screen.active{ display:block; animation:fadein .35s ease; }
+  @keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  /* SELECT NAME CARD */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+  }
+  label{ display:block; font-size:13px; color:var(--text-dim); margin-bottom:8px; font-weight:600; }
+  select, input{
+    width:100%;
+    padding:14px 14px;
+    background:var(--bg-soft);
+    border:1px solid var(--line);
+    border-radius:10px;
+    color:var(--text);
+    font-size:16px;
+    appearance:none;
+  }
+  select:focus, input:focus{ outline:2px solid var(--yellow); outline-offset:1px; }
+
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%;
+    padding:16px;
+    border-radius:12px;
+    border:none;
+    background:var(--yellow);
+    color:#1A1300;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    margin-top:16px;
+    transition:transform .15s ease, opacity .15s ease;
+  }
+  .btn:active{ transform:scale(0.98); }
+  .btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .btn.ghost{
+    background:transparent;
+    color:var(--text);
+    border:1px solid var(--line);
+  }
+  .btn.danger{ background:var(--red); color:#fff; }
+
+  .hint{ font-size:12.5px; color:var(--text-mute); margin-top:10px; text-align:center; }
+
+  .error-text{ font-size:13px; color:var(--red); margin-top:10px; text-align:center; }
+
+  .confirm-box{ text-align:center; padding:8px 0 4px; }
+  .confirm-icon{
+    width:52px; height:52px; border-radius:50%;
+    background:rgba(61,220,151,0.15); color:var(--green);
+    display:flex; align-items:center; justify-content:center;
+    font-size:26px; font-weight:800; margin:0 auto 14px;
+  }
+  .confirm-label{ font-size:12.5px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; font-weight:600; }
+  .confirm-name{ font-size:19px; font-weight:800; margin-bottom:4px; }
+  .confirm-meta{ font-size:13.5px; color:var(--text-dim); line-height:1.5; }
+
+  /* PROGRESS */
+  .progress-wrap{ padding:18px 20px 0; }
+  .progress-row{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; }
+  .progress-row span{ font-size:13px; color:var(--text-dim); font-weight:600; }
+  .progress-row b{ color:var(--yellow); }
+  .progress-bar{ height:6px; background:var(--bg-soft); border-radius:6px; overflow:hidden; }
+  .progress-fill{ height:100%; background:var(--yellow); width:0%; transition:width .4s ease; border-radius:6px; }
+
+  /* LESSON LIST */
+  .lesson{
+    display:flex; align-items:center; gap:14px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:10px;
+    cursor:pointer;
+    transition:border-color .15s ease;
+  }
+  .lesson.done{ border-color:var(--green); }
+  .lesson.active{ border-color:var(--yellow); }
+  .lesson .num{
+    width:36px; height:36px; min-width:36px;
+    border-radius:50%;
+    background:var(--bg-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; font-weight:700; color:var(--text-dim);
+  }
+  .lesson.done .num{ background:var(--green); color:#06281C; }
+  .lesson.active .num{ background:var(--yellow); color:#1A1300; }
+  .lesson .meta{ flex:1; min-width:0; }
+  .lesson .meta .t{ font-size:15px; font-weight:600; }
+  .lesson .meta .d{ font-size:12.5px; color:var(--text-mute); margin-top:2px; }
+  .lesson .check{ font-size:18px; color:var(--green); }
+
+  /* VIDEO PLAYER SCREEN */
+  .video-frame{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    background:#000;
+    border-radius:var(--radius);
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .video-frame iframe{ width:100%; height:100%; border:0; }
+  .lesson-title{ font-size:18px; font-weight:700; margin-bottom:4px; }
+  .lesson-index{ font-size:13px; color:var(--yellow); font-weight:700; margin-bottom:8px; }
+
+  /* QUIZ */
+  .q-card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-bottom:16px;
+  }
+  .q-index{ font-size:12.5px; color:var(--text-dim); font-weight:700; margin-bottom:8px; letter-spacing:.05em; }
+  .q-text{ font-size:16.5px; font-weight:600; line-height:1.5; margin-bottom:16px; }
+  .opt{
+    display:flex; align-items:center; gap:12px;
+    padding:13px 14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    margin-bottom:8px;
+    cursor:pointer;
+    font-size:15px;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .opt:hover{ border-color:var(--text-mute); }
+  .opt.selected{ border-color:var(--yellow); background:rgba(255,201,0,0.08); }
+  .opt .letter{
+    width:26px; height:26px; min-width:26px;
+    border-radius:50%;
+    background:var(--bg-soft);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; color:var(--text-dim);
+  }
+  .opt.selected .letter{ background:var(--yellow); color:#1A1300; }
+
+  /* RESULT */
+  .result-hero{ text-align:center; padding:30px 20px; }
+  .score-circle{
+    width:140px; height:140px;
+    border-radius:50%;
+    margin:0 auto 20px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    border:6px solid var(--yellow);
+    background:var(--bg-soft);
+  }
+  .score-circle .num{ font-size:34px; font-weight:800; }
+  .score-circle .lbl{ font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; margin-top:2px;}
+  .result-title{ font-size:20px; font-weight:800; margin-bottom:6px; }
+  .result-sub{ font-size:14px; color:var(--text-dim); }
+  .stat-row{ display:flex; gap:10px; margin-top:20px; }
+  .stat-box{ flex:1; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; text-align:center; }
+  .stat-box .v{ font-size:20px; font-weight:800; }
+  .stat-box .l{ font-size:11.5px; color:var(--text-mute); margin-top:2px; }
+
+  .loading{ text-align:center; padding:60px 20px; color:var(--text-dim); font-size:14px; }
+  .spinner{
+    width:32px; height:32px; border-radius:50%;
+    border:3px solid var(--line); border-top-color:var(--yellow);
+    margin:0 auto 14px;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  .top-actions{ display:flex; justify-content:space-between; align-items:center; padding:16px 20px 0; }
+  .back-link{ font-size:13px; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; gap:4px; }
+  .pill{ font-size:12px; background:var(--bg-soft); border:1px solid var(--line); padding:5px 10px; border-radius:20px; color:var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="brand"><div class="dot"></div><span>Realme &middot; Đào tạo PG</span></div>
+    <h1>AI Camera &amp; <em>AI đa nhiệm</em><br/>trên điện thoại realme</h1>
+    <p class="sub">Học nhanh, làm bài kiểm tra, nắm chắc tính năng để tư vấn khách hàng.</p>
+  </header>
+
+  <!-- SCREEN 0: nhập mã nhân viên -->
+  <div class="screen active" id="screen-login">
+    <div class="card" style="margin-top:20px;" id="login-card-input">
+      <label for="input-manv">Nhập Mã nhân viên của bạn</label>
+      <input type="text" id="input-manv" placeholder="Ví dụ: NV001" autocomplete="off" autocapitalize="characters" />
+      <p class="error-text" id="login-error" style="display:none;"></p>
+      <button class="btn" id="btn-check-manv">Kiểm tra</button>
+      <p class="hint">Không nhớ mã NV? Liên hệ quản lý khu vực để được hỗ trợ.</p>
+    </div>
+
+    <div class="card" style="margin-top:20px; display:none;" id="login-card-confirm">
+      <div class="confirm-box">
+        <div class="confirm-icon">&#10003;</div>
+        <div class="confirm-label">Xác nhận thông tin</div>
+        <div class="confirm-name" id="confirm-name"></div>
+        <div class="confirm-meta" id="confirm-meta"></div>
+      </div>
+      <button class="btn" id="btn-confirm-start">Đúng, bắt đầu học</button>
+      <button class="btn ghost" id="btn-confirm-back" style="margin-top:10px;">Không phải tôi, nhập lại</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: danh sách bài học -->
+  <div class="screen" id="screen-lessons">
+    <div class="top-actions">
+      <span class="back-link" onclick="backToLogin()">‹ Đổi người học</span>
+      <span class="pill" id="pill-name"></span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-row"><span>Tiến độ học</span><span><b id="progress-count">0</b>/<span id="progress-total">7</span> video</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+    <div style="padding:18px 20px;">
+      <div id="lesson-list"></div>
+      <button class="btn" id="btn-go-quiz" disabled>Làm bài kiểm tra</button>
+      <p class="hint" id="quiz-lock-hint">Xem hết tất cả video để mở bài kiểm tra.</p>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: xem video -->
+  <div class="screen" id="screen-video">
+    <div class="top-actions">
+      <span class="back-link" onclick="goTo('screen-lessons')">‹ Danh sách bài học</span>
+    </div>
+    <div style="padding:18px 20px;">
+      <div class="lesson-index" id="video-index"></div>
+      <div class="lesson-title" id="video-title"></div>
+      <div class="video-frame" id="video-frame-holder"></div>
+      <button class="btn" id="btn-mark-done">Đã xem xong, tiếp tục</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: quiz -->
+  <div class="screen" id="screen-quiz">
+    <div class="progress-wrap">
+      <div class="progress-row"><span>Câu hỏi</span><span><b id="quiz-current">1</b>/<span id="quiz-total">10</span></span></div>
+      <div class="progress-bar"><div class="progress-fill" id="quiz-progress-fill"></div></div>
+    </div>
+    <div style="padding:18px 20px;" id="quiz-container"></div>
+  </div>
+
+  <!-- SCREEN 4: kết quả -->
+  <div class="screen" id="screen-result">
+    <div class="result-hero">
+      <div class="score-circle">
+        <div class="num" id="result-score">0%</div>
+        <div class="lbl">Điểm số</div>
+      </div>
+      <div class="result-title" id="result-title">Hoàn thành!</div>
+      <div class="result-sub" id="result-sub">Kết quả đã được ghi nhận.</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="v" id="result-correct">0</div><div class="l">Câu đúng</div></div>
+        <div class="stat-box"><div class="v" id="result-wrong">0</div><div class="l">Câu sai</div></div>
+        <div class="stat-box"><div class="v" id="result-rank">-</div><div class="l">Xếp loại</div></div>
+      </div>
+      <button class="btn ghost" style="margin-top:24px;" onclick="location.reload()">Hoàn tất</button>
+    </div>
+  </div>
+
+  <!-- SCREEN loading -->
+  <div class="screen" id="screen-loading">
+    <div class="loading"><div class="spinner"></div>Đang tải dữ liệu...</div>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+ * CẤU HÌNH - SỬA CÁC GIÁ TRỊ DƯỚI ĐÂY THEO DỰ ÁN CỦA BẠN
+ * ============================================================ */
+
+// 1. Dán Web app URL từ Google Apps Script vào đây
+const API_URL = "https://script.google.com/macros/s/AKfycbzjKCxnpXK4_xWtpOK5Tc7w_a7iYI2XEQPBzR9ekal3y7AEV2emyfwjX4MLJHO_8PXn/exec";
+
+// 2. Danh sách video bài học - sửa title, description và driveId cho từng video
+//    driveId lấy từ link chia sẻ Google Drive dạng:
+//    https://drive.google.com/file/d/ĐÂY_LÀ_ID/view
+const LESSONS = [
+  { title: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",                  desc: "TÍNH NĂNG VÙNG AN TOÀN RIÊNG TƯ",                  driveId: "1X56Knue5Mmqz4aEAgxjw2kTO6gfZzsiM" },
+  { title: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",                   desc: "TÍNH NĂNG VÒNG TRÒN THÔNG MINH",                   driveId: "1Q8kph1cE1otczzYu3eMdlV0Kv0aTs6MY" },
+  { title: "TÍNH NĂNG VIÊN NANG MINI",                         desc: "TÍNH NĂNG VIÊN NANG MINI",                         driveId: "1rX_7Hg0dFtSgxHs2k4dXG7WrdrtnRbo5" },
+  { title: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",         desc: "TÍNH NĂNG TIỆN ÍCH MÀN HÌNH CHÍNH + KHÓA",         driveId: "1pMEFhMoqS-B7En9LlcMY87LzTG8lm2yp" },
+  { title: "TÍNH NĂNG THANH TRẠNG THÁI",                       desc: "TÍNH NĂNG THANH TRẠNG THÁI",                       driveId: "1cFIS7xW46phvrT14qK4O7W6B8jwCTeo5" },
+  { title: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",                      desc: "TÍNH NĂNG NHÂN BẢN ỨNG DỤNG",                      driveId: "1CTVU9xXhSD6hF1Uy5g1TibFKzfZ78s36" },
+  { title: "TÍNH NĂNG NFC",                                    desc: "TÍNH NĂNG NFC",                                    driveId: "11hN1tmZtRu0Q2qWAA8XshmdyWqqo44yg" },
+  { title: "TÍNH NĂNG LÀM DỊU MẮT",                            desc: "TÍNH NĂNG LÀM DỊU MẮT",                            driveId: "1DIjyEtv8m5CeIosxP84ubuexMW3Sl2Bf" },
+  { title: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",        desc: "TÍNH NĂNG KHÓA ỨNG DỤNG (HỆ ĐIỀU HÀNH UI)",        driveId: "1sdz3SHiI-NROVeHyOu5xBIhxZd8upINB" },
+  { title: "TÍNH NĂNG KÉO VÀ THẢ",                             desc: "TÍNH NĂNG KÉO VÀ THẢ",                             driveId: "1CNnI0hMSuJHzxxJb1w29ETO8DMv5Bf17" },
+  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",      desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG DÒNG NUMBER SERIES",      driveId: "1q7uNYE-9lnq6wtfCF7wWfXhBCNETDZFs" },
+  { title: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",       desc: "TÍNH NĂNG HỖ TRỢ CẢM ỨNG (HỆ ĐIỀU HÀNH UI)",       driveId: "1FDZYAWNS6Xbalvwe8R93J5RGJlumtXOZ" },
+  { title: "TÍNH NĂNG GHI MÀN HÌNH",                           desc: "TÍNH NĂNG GHI MÀN HÌNH",                           driveId: "1bm5Yjh8kKx8sq8zDn6ZlAUI-Z5TEVsFY" },
+  { title: "TÍNH NĂNG CỬA SỔ NỔI",                             desc: "TÍNH NĂNG CỬA SỔ NỔI",                             driveId: "1jEk6LvSBSxj6-B78n0GSLBWvmiIXMnfg" },
+  { title: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",                  desc: "TÍNH NĂNG CỬ CHỈ VÀ CHUYỂN ĐỘNG",                  driveId: "1XjY15B1yrVFm2wFdxwNuLwBFAedVit6D" },
+  { title: "TÍNH NĂNG CHỤP MÀN HÌNH",                          desc: "TÍNH NĂNG CHỤP MÀN HÌNH",                          driveId: "1swiFakT6ER6k_FtBppHF1PinyvNJPeJU" },
+  { title: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",                      desc: "TÍNH NĂNG CHIA ĐÔI MÀN HÌNH",                      driveId: "15C_dl6EvYkWL0nc5mUQc4M0sdMkF_Qtz" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",                          desc: "TÍNH NĂNG CHẾ ĐỘ TRẺ EM",                          driveId: "10HrtSbF1KPZ0UrerzCpbuZ7lJvhAh5MH" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",                         desc: "TÍNH NĂNG CHẾ ĐỘ MỘT TAY",                         driveId: "1eqfWhY0zN5SpiGmQTIEO81JR9hyHL0uJ" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",                        desc: "TÍNH NĂNG CHẾ ĐỘ ĐƠN GIẢN",                        driveId: "1hAD9SczOQvq_fPLsQEQAXidB3Avt1xsX" },
+  { title: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",                   desc: "TÍNH NĂNG CHẾ ĐỘ AI NGOÀI TRỜI",                   driveId: "1XBFxZiUa_BEfc9imVqvXOCIQnJYtkmwB" },
+  { title: "TÍNH NĂNG CAMERA AI POP OUT",                      desc: "TÍNH NĂNG CAMERA AI POP OUT",                      driveId: "1crNp5dINv9qgyvyZnnTQYq4F_7ec572e" },
+  { title: "TÍNH NĂNG CAMERA AI EDIT GENIE",                   desc: "TÍNH NĂNG CAMERA AI EDIT GENIE",                   driveId: "1LYPj_BZLKDORA4t7a3vRKfhwT2ziYZIS" },
+  { title: "TÍNH NĂNG CÀI ĐẶT NHANH",                          desc: "TÍNH NĂNG CÀI ĐẶT NHANH",                          driveId: "1GeIS7jUQZQrrG9llcJpG5dqdwNHcZHBL" },
+  { title: "TÍNH NĂNG ẨN ỨNG DỤNG",                            desc: "TÍNH NĂNG ẨN ỨNG DỤNG",                            driveId: "1oTpRjBo0CG8macwBce2_acy4nUJukS8-" }
+];
+
+/* ============================================================
+ * STATE
+ * ============================================================ */
+let nhanSuList = [];
+let cauHoiList = [];
+let currentUser = null;
+let watchedLessons = new Set();
+let currentLessonIdx = null;
+let quizAnswers = {};
+let quizOrder = [];
+
+/* ============================================================
+ * NAVIGATION
+ * ============================================================ */
+function goTo(screenId){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(screenId).classList.add('active');
+}
+
+function backToLogin(){
+  currentUser = null;
+  watchedLessons = new Set();
+  document.getElementById('input-manv').value = '';
+  document.getElementById('login-card-confirm').style.display = 'none';
+  document.getElementById('login-card-input').style.display = 'block';
+  clearLoginError();
+  goTo('screen-login');
+}
+
+/* ============================================================
+ * INIT - load danh sách nhân sự (ngầm, không hiện dropdown)
+ * ============================================================ */
+let nhanSuReady = false;
+
+async function loadNhanSu(){
+  try{
+    const res = await fetch(`${API_URL}?action=getNhanSu`);
+    const data = await res.json();
+    nhanSuList = data;
+    nhanSuReady = true;
+  }catch(err){
+    console.error(err);
+    showLoginError('Không tải được dữ liệu nhân sự. Vui lòng tải lại trang hoặc kiểm tra kết nối mạng.');
+  }
+}
+
+function showLoginError(msg){
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = msg;
+  errEl.style.display = 'block';
+}
+
+function clearLoginError(){
+  document.getElementById('login-error').style.display = 'none';
+}
+
+function normalizeCode(str){
+  return (str || '').trim().toUpperCase();
+}
+
+document.getElementById('input-manv').addEventListener('input', clearLoginError);
+document.getElementById('input-manv').addEventListener('keydown', (e) => {
+  if(e.key === 'Enter') checkManV();
+});
+
+document.getElementById('btn-check-manv').addEventListener('click', checkManV);
+
+function checkManV(){
+  clearLoginError();
+  const raw = document.getElementById('input-manv').value;
+  const code = normalizeCode(raw);
+
+  if(code === ''){
+    showLoginError('Vui lòng nhập Mã nhân viên.');
+    return;
+  }
+  if(!nhanSuReady){
+    showLoginError('Hệ thống đang tải dữ liệu, vui lòng thử lại sau vài giây.');
+    return;
+  }
+
+  const found = nhanSuList.find(nv => normalizeCode(nv.maNV) === code);
+
+  if(!found){
+    showLoginError('Không tìm thấy Mã nhân viên này trong hệ thống. Kiểm tra lại hoặc liên hệ quản lý khu vực.');
+    return;
+  }
+
+  currentUser = found;
+  document.getElementById('confirm-name').textContent = found.hoTen;
+  document.getElementById('confirm-meta').textContent = `${found.maNV} — ${found.chiNhanh}${found.khuVuc ? ' — ' + found.khuVuc : ''}`;
+  document.getElementById('login-card-input').style.display = 'none';
+  document.getElementById('login-card-confirm').style.display = 'block';
+}
+
+document.getElementById('btn-confirm-back').addEventListener('click', () => {
+  currentUser = null;
+  document.getElementById('input-manv').value = '';
+  document.getElementById('login-card-confirm').style.display = 'none';
+  document.getElementById('login-card-input').style.display = 'block';
+  clearLoginError();
+  document.getElementById('input-manv').focus();
+});
+
+document.getElementById('btn-confirm-start').addEventListener('click', () => {
+  if(!currentUser) return;
+  document.getElementById('pill-name').textContent = currentUser.hoTen;
+  renderLessons();
+  goTo('screen-lessons');
+});
+
+/* ============================================================
+ * LESSONS
+ * ============================================================ */
+function renderLessons(){
+  document.getElementById('progress-total').textContent = LESSONS.length;
+  const list = document.getElementById('lesson-list');
+  list.innerHTML = '';
+  LESSONS.forEach((lesson, i) => {
+    const done = watchedLessons.has(i);
+    const div = document.createElement('div');
+    div.className = 'lesson' + (done ? ' done' : '');
+    div.innerHTML = `
+      <div class="num">${done ? '' : i+1}</div>
+      <div class="meta">
+        <div class="t">${lesson.title}</div>
+        <div class="d">${lesson.desc}</div>
+      </div>
+      ${done ? '<div class="check">&#10003;</div>' : ''}
+    `;
+    div.onclick = () => openLesson(i);
+    list.appendChild(div);
+  });
+  updateProgress();
+}
+
+function updateProgress(){
+  const count = watchedLessons.size;
+  document.getElementById('progress-count').textContent = count;
+  document.getElementById('progress-fill').style.width = `${(count/LESSONS.length)*100}%`;
+  const quizBtn = document.getElementById('btn-go-quiz');
+  const hint = document.getElementById('quiz-lock-hint');
+  if(count >= LESSONS.length){
+    quizBtn.disabled = false;
+    hint.style.display = 'none';
+  } else {
+    quizBtn.disabled = true;
+    hint.style.display = 'block';
+  }
+}
+
+function openLesson(i){
+  currentLessonIdx = i;
+  const lesson = LESSONS[i];
+  document.getElementById('video-index').textContent = `Bài ${i+1}/${LESSONS.length}`;
+  document.getElementById('video-title').textContent = lesson.title;
+  document.getElementById('video-frame-holder').innerHTML =
+    `<iframe src="https://drive.google.com/file/d/${lesson.driveId}/preview" allow="autoplay" allowfullscreen></iframe>`;
+  goTo('screen-video');
+}
+
+document.getElementById('btn-mark-done').addEventListener('click', () => {
+  watchedLessons.add(currentLessonIdx);
+  renderLessons();
+  goTo('screen-lessons');
+});
+
+document.getElementById('btn-go-quiz').addEventListener('click', () => {
+  startQuiz();
+});
+
+/* ============================================================
+ * QUIZ
+ * ============================================================ */
+async function loadCauHoi(){
+  const res = await fetch(`${API_URL}?action=getCauHoi`);
+  cauHoiList = await res.json();
+}
+
+function startQuiz(){
+  quizAnswers = {};
+  quizOrder = cauHoiList.map((_, i) => i);
+  document.getElementById('quiz-total').textContent = cauHoiList.length;
+  renderQuizAll();
+  goTo('screen-quiz');
+}
+
+function renderQuizAll(){
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+  cauHoiList.forEach((q, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    const options = ['A','B','C','D'];
+    card.innerHTML = `
+      <div class="q-index">CÂU ${i+1}/${cauHoiList.length}</div>
+      <div class="q-text">${q.cauHoi}</div>
+      <div class="opts" data-q="${i}">
+        ${options.map(letter => `
+          <div class="opt" data-letter="${letter}" onclick="selectAnswer(${i}, '${letter}')">
+            <div class="letter">${letter}</div>
+            <div>${q[letter]}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  const submitBtn = document.createElement('button');
+  submitBtn.className = 'btn';
+  submitBtn.id = 'btn-submit-quiz';
+  submitBtn.textContent = 'Nộp bài';
+  submitBtn.disabled = true;
+  submitBtn.onclick = submitQuiz;
+  container.appendChild(submitBtn);
+  const hint = document.createElement('p');
+  hint.className = 'hint';
+  hint.id = 'submit-hint';
+  hint.textContent = `Trả lời hết ${cauHoiList.length} câu để nộp bài.`;
+  container.appendChild(hint);
+}
+
+function selectAnswer(qIdx, letter){
+  quizAnswers[qIdx] = letter;
+  const group = document.querySelector(`.opts[data-q="${qIdx}"]`);
+  group.querySelectorAll('.opt').forEach(opt => {
+    opt.classList.toggle('selected', opt.dataset.letter === letter);
+  });
+  checkAllAnswered();
+}
+
+function checkAllAnswered(){
+  const allAnswered = Object.keys(quizAnswers).length === cauHoiList.length;
+  document.getElementById('btn-submit-quiz').disabled = !allAnswered;
+  document.getElementById('submit-hint').style.display = allAnswered ? 'none' : 'block';
+}
+
+async function submitQuiz(){
+  let correct = 0;
+  cauHoiList.forEach((q, i) => {
+    if(quizAnswers[i] === q.dapAnDung) correct++;
+  });
+  const total = cauHoiList.length;
+  const score = Math.round((correct/total)*100);
+
+  document.getElementById('btn-submit-quiz').disabled = true;
+  document.getElementById('btn-submit-quiz').textContent = 'Đang ghi nhận kết quả...';
+
+  try{
+    await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'submitKetQua',
+        maNV: currentUser.maNV,
+        hoTen: currentUser.hoTen,
+        chiNhanh: currentUser.chiNhanh,
+        khuVuc: currentUser.khuVuc,
+        diemSo: score,
+        soCauDung: correct,
+        tongCauHoi: total
+      })
+    });
+  }catch(err){
+    console.error('Lỗi ghi kết quả:', err);
+  }
+
+  showResult(score, correct, total - correct);
+}
+
+function showResult(score, correct, wrong){
+  document.getElementById('result-score').textContent = `${score}%`;
+  document.getElementById('result-correct').textContent = correct;
+  document.getElementById('result-wrong').textContent = wrong;
+  let rank = 'Chưa đạt';
+  if(score >= 80) rank = 'Xuất sắc';
+  else if(score >= 65) rank = 'Đạt';
+  document.getElementById('result-rank').textContent = rank;
+  document.getElementById('result-title').textContent =
+    score >= 65 ? 'Chúc mừng bạn đã hoàn thành!' : 'Bạn cần ôn lại kiến thức';
+  document.getElementById('result-sub').textContent =
+    score >= 65
+      ? 'Kết quả của bạn đã được gửi về hệ thống.'
+      : 'Hãy xem lại video và làm bài kiểm tra lần sau.';
+  goTo('screen-result');
+}
+
+/* ============================================================
+ * START
+ * ============================================================ */
+(async function init(){
+  await Promise.all([loadNhanSu(), loadCauHoi()]);
+})();
+</script>
+
+</body>
+</html>
